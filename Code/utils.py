@@ -24,7 +24,7 @@ def get_data():
     print('#### X_train collected ####')
 
     test_list = []
-    with zipfile.ZipFile(x_train_path, 'r') as ziptest:
+    with zipfile.ZipFile(x_test_path, 'r') as ziptest:
         for info in ziptest.infolist():
             zip_img = ziptest.open(info.filename)
             cv_img = cv2.imdecode(np.frombuffer(zip_img.read(), dtype=np.uint8),
