@@ -15,7 +15,7 @@ def get_data():
 
     train_list = []
     with zipfile.ZipFile(x_train_path, 'r') as ziptrain:
-        for info in ziptrain.infolist():
+        for info in ziptrain.infolist()[1:]:
             zip_img = ziptrain.open(info.filename)
             cv_img = cv2.imdecode(np.frombuffer(zip_img.read(), dtype=np.uint8),
                                 cv2.IMREAD_GRAYSCALE)
@@ -25,7 +25,7 @@ def get_data():
 
     test_list = []
     with zipfile.ZipFile(x_test_path, 'r') as ziptest:
-        for info in ziptest.infolist():
+        for info in ziptest.infolist()[1:]:
             zip_img = ziptest.open(info.filename)
             cv_img = cv2.imdecode(np.frombuffer(zip_img.read(), dtype=np.uint8),
                                 cv2.IMREAD_GRAYSCALE)
