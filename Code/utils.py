@@ -8,34 +8,47 @@ import matplotlib.pyplot as plt
 import sklearn.metrics
 
 def get_data():
+    
     datasets_dir = os.getcwd().replace('Code','Datasets')
     y_train_path = Path(datasets_dir + '\\y_train.csv')
     x_train_path = Path(datasets_dir + '\\X_train.zip')
     x_test_path = Path(datasets_dir + '\\X_test.zip')
 
+    train_image_order = {}
     train_list = []
     with zipfile.ZipFile(x_train_path, 'r') as ziptrain:
-        for info in ziptrain.infolist()[1:]:
+        for info in ziptrain.infolist():
+            image_number = int(str(info).split('/')[1].split('.')[0])
+            train_image_order[image_number] = info
+        sorted_infolist = dict(sorted(train_image_order.items())).values()
+        for info in sorted_infolist:
             zip_img = ziptrain.open(info.filename)
             cv_img = cv2.imdecode(np.frombuffer(zip_img.read(), dtype=np.uint8),
                                 cv2.IMREAD_GRAYSCALE)
             train_list.append(cv_img)
+
     X_train = np.stack(train_list, axis=0)
     print('#### X_train collected ####')
-
+    
+    test_image_order = {}
     test_list = []
     with zipfile.ZipFile(x_test_path, 'r') as ziptest:
-        for info in ziptest.infolist()[1:]:
+        for info in ziptest.infolist():
+            image_number = int(str(info).split('/')[1].split('.')[0])
+            test_image_order[image_number] = info
+        sorted_infolist = dict(sorted(test_image_order.items())).values()
+        for info in sorted_infolist:
             zip_img = ziptest.open(info.filename)
             cv_img = cv2.imdecode(np.frombuffer(zip_img.read(), dtype=np.uint8),
                                 cv2.IMREAD_GRAYSCALE)
-            test_list.append(cv_img)        
+            test_list.append(cv_img)
+
     X_test = np.stack(test_list, axis=0)
     print('#### X_test collected ####')
-
+    
     y_train = pd.read_csv(y_train_path, index_col=0).T
     print('#### y_train collected ####')
-
+    
     return X_train, X_test, y_train
 
 def prediction_to_df(df):
